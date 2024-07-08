@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
-st.title("Linear Regression")
+st.title("employee_compensation using Linear Regression")
 
 
     df = pd.read_csv("employee_compensation.csv" type="csv")
