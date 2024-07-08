@@ -7,47 +7,48 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
-st.title("employee_compensation using Linear Regression")
+st.title("Employee Compensation using Linear Regression")
 
-
+# Load Data
 df = pd.read_csv("employee_compensation.csv")
+st.write(df)
+
+# Select Target Column
+target_column = st.selectbox("Select the target column", df.columns)
+
+if st.button("Preprocess Data"):
+    # Handle Missing Data
+    for column in df.columns:
+        df[column].fillna(df[column].mode()[0], inplace=True)
+
+    # Encode Categorical Data
+    if df.select_dtypes(include=['object']).shape[1] > 0:
+        df = pd.get_dummies(df, drop_first=True)
+
+    # Feature Scaling
+    numeric_cols = df.select_dtypes(include=[np.number, np.float_, np.int_]).columns
+    scaler = MinMaxScaler()
+    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+
+    # Convert infinite values to NaN
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+    # Drop rows with NaN values
+    df.dropna(inplace=True)
+
+    # Store preprocessed data in session state
+    st.session_state.preprocessed_data = df
+    st.session_state.data_preprocessed = True
+
+    st.write("Data after preprocessing:")
     st.write(df)
 
-    target_column = st.selectbox("Select the target column", df.columns)
-
-    if st.button("Preprocess Data"):
-        # Handle Missing Data
-        for column in df.columns:
-            df[column].fillna(df[column].mode()[0], inplace=True)
-
-        # Encode Categorical Data
-        if df.select_dtypes(include=['object']).shape[1] > 0:
-            df = pd.get_dummies(df, drop_first=True)
-
-        # Feature Scaling
-        numeric_cols = df.select_dtypes(include=[np.number,np.float_,np.int_]).columns
-        scaler = MinMaxScaler()
-        df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
-
-        # Convert infinite values to NaN
-        df.replace([np.inf, -np.inf], np.nan, inplace=True)
-
-        # Drop rows with NaN values
-        df.dropna(inplace=True)
-
-        # Store preprocessed data in session state
-        st.session_state.preprocessed_data = df
-        st.session_state.data_preprocessed = True
-
-        st.write("Data after preprocessing:")
-        st.write(df)
-
-        # Calculate VIF
-        vif = pd.DataFrame()
-        vif["features"] = df.columns
-        vif["VIF Factor"] = [variance_inflation_factor(df.values.astype(float), i) for i in range(df.shape[1])]
-        st.write("VIF Calculation:")
-        st.write(vif)
+    # Calculate VIF
+    vif = pd.DataFrame()
+    vif["features"] = df.columns
+    vif["VIF Factor"] = [variance_inflation_factor(df.values.astype(float), i) for i in range(df.shape[1])]
+    st.write("VIF Calculation:")
+    st.write(vif)
 
 if st.session_state.get('data_preprocessed', False):
     if st.button("Train and Test Linear Regression Model"):
