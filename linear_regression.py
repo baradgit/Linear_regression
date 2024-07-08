@@ -9,9 +9,8 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 st.title("Linear Regression")
 
-uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+
+    df = pd.read_csv("employee_compensation.csv" type="csv")
     st.write(df)
 
     target_column = st.selectbox("Select the target column", df.columns)
