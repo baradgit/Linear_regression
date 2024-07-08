@@ -64,10 +64,20 @@ if st.session_state.get('data_preprocessed', False):
         model = LinearRegression()
         model.fit(X_train, y_train)
 
+        y_pred = model.predict(X_train)
+
+        mse = mean_squared_error(y_train, y_pred)
+        r2 = r2_score(y_train, y_pred)
+
+        st.write("Training")
+        st.write("Mean Squared Error:", mse)
+        st.write("R2 Score:", r2)
+        
         y_pred = model.predict(X_test)
 
         mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
-
+        
+        st.write("Testing")
         st.write("Mean Squared Error:", mse)
         st.write("R2 Score:", r2)
