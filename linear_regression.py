@@ -10,7 +10,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 st.title("employee_compensation using Linear Regression")
 
 
-    df = pd.read_csv("employee_compensation.csv" type="csv")
+    df = pd.read_csv("employee_compensation.csv")
     st.write(df)
 
     target_column = st.selectbox("Select the target column", df.columns)
