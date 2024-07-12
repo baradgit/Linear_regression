@@ -64,20 +64,38 @@ if st.session_state.get('data_preprocessed', False):
         model = LinearRegression()
         model.fit(X_train, y_train)
 
-        y_pred = model.predict(X_train)
+        y_pred_train = model.predict(X_train)
 
-        mse = mean_squared_error(y_train, y_pred)
-        r2 = r2_score(y_train, y_pred)
+        mse_train = mean_squared_error(y_train, y_pred_train)
+        r2_train = r2_score(y_train, y_pred_train)
 
         st.write("Training")
-        st.write("Mean Squared Error:", mse)
-        st.write("R2 Score:", r2)
+        st.write("Mean Squared Error:", mse_train)
+        st.write("R2 Score:", r2_train)
         
-        y_pred = model.predict(X_test)
+        y_pred_test = model.predict(X_test)
 
-        mse = mean_squared_error(y_test, y_pred)
-        r2 = r2_score(y_test, y_pred)
+        mse_test = mean_squared_error(y_test, y_pred_test)
+        r2_test = r2_score(y_test, y_pred_test)
         
         st.write("Testing")
-        st.write("Mean Squared Error:", mse)
-        st.write("R2 Score:", r2)
+        st.write("Mean Squared Error:", mse_test)
+        st.write("R2 Score:", r2_test)
+
+        st.session_state.model = model
+        st.session_state.X_test = X_test
+        st.session_state.y_test = y_test
+        st.session_state.y_pred_test = y_pred_test
+
+if st.session_state.get('model', False):
+    st.header("Test Data Predictions")
+    
+    test_data = st.session_state.X_test.copy()
+    test_data[target_column] = st.session_state.y_test
+    test_data['Predicted'] = st.session_state.y_pred_test
+
+    st.write("Test Data with Actual and Predicted Values")
+    st.write(test_data)
+
+    st.write("Mean Squared Error on Test Data:", mean_squared_error(st.session_state.y_test, st.session_state.y_pred_test))
+    st.write("R2 Score on Test Data:", r2_score(st.session_state.y_test, st.session_state.y_pred_test))
